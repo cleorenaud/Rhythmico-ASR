@@ -3,7 +3,10 @@ IPython
 ipywidgets
 librosa
 pandas
+phonemizer
+protobuf
 numpy
 soundfile
 torch
+torchaudio
 transformers
