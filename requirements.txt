@@ -1,5 +1,9 @@
 pydub
 IPython
 ipywidgets
+librosa
 pandas
 numpy
+soundfile
+torch
+transformers
