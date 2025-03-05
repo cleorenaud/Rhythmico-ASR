@@ -1,8 +1,11 @@
 import io
+import os
 from pydub import AudioSegment
 from IPython.display import Audio, display
 import ipywidgets as widgets
 import numpy as np
+import pandas as pd
+import base64
 
 def create_audio_player_with_results(recordings, evaluation_results):
     """
@@ -89,3 +92,31 @@ def save_as_mp3(encoded_m4a, filename, output_folder="mp3_files"):
     mp3_path = os.path.join(output_folder, f"{filename}.mp3")
     audio.export(mp3_path, format="mp3")
     return mp3_path
+
+def save_recordings_as_wav(dataframe, output_dir='wav_files'):
+    """Given a dataframe, save all recordings as .wav files to the specified directory."""
+    
+    # Ensure the output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    # Iterate through each row in the DataFrame
+    for index, row in dataframe.iterrows():
+        # Extract the recording byte data from the 'testResults' column
+        recording = row['testResults'].get('recording', None)
+        
+        if recording:
+            try:
+                # Construct the filename
+                file_name = f"recording_{row['id']}.wav"
+                file_path = os.path.join(output_dir, file_name)
+                
+                # Save the byte data as a .wav file
+                with open(file_path, 'wb') as f:
+                    f.write(recording)
+                
+                print(f"Saved {file_name}")
+            
+            except Exception as e:
+                print(f"Error processing recording for ID {row['id']}: {e}")
+
