@@ -4,8 +4,7 @@ from pydub import AudioSegment
 from IPython.display import Audio, display
 import ipywidgets as widgets
 import numpy as np
-import pandas as pd
-import base64
+import torchaudio
 
 def create_audio_player_with_results(recordings, evaluation_results):
     """
@@ -107,16 +106,31 @@ def save_recordings_as_wav(dataframe, output_dir='wav_files'):
         
         if recording:
             try:
-                # Construct the filename
-                file_name = f"recording_{row['id']}.wav"
+                # Get the test type, replace spaces with underscores to make filenames safe
+                test_type = str(row.get('testType', 'unknown')).replace(' ', '_')
+                
+                # Construct the filename with id and test type
+                file_name = f"{test_type}_{row['id']}.wav"
                 file_path = os.path.join(output_dir, file_name)
                 
                 # Save the byte data as a .wav file
                 with open(file_path, 'wb') as f:
                     f.write(recording)
-                
-                print(f"Saved {file_name}")
             
             except Exception as e:
                 print(f"Error processing recording for ID {row['id']}: {e}")
 
+def load_audio(file_path):
+    """
+    Load a .wav file and return the waveform and sample rate.
+    """
+    waveform, sample_rate = torchaudio.load(file_path)
+    return waveform, sample_rate
+
+def preprocess_audio(waveform, sample_rate, target_sample_rate=16000):
+    """
+    Resample the waveform to the target sample rate if needed.
+    """
+    if sample_rate != target_sample_rate:
+        waveform = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=target_sample_rate)(waveform)
+    return waveform
