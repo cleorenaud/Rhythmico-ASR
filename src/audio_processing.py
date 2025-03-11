@@ -127,10 +127,14 @@ def load_audio(file_path):
     waveform, sample_rate = torchaudio.load(file_path)
     return waveform, sample_rate
 
-def preprocess_audio(waveform, sample_rate, target_sample_rate=16000):
+def preprocess_audio(waveform, sample_rate=None, target_sample_rate=16000):
     """
-    Resample the waveform to the target sample rate if needed.
+    Preprocess the audio waveform.
+
+    Since all audio files are already at the target sample rate, no resampling is performed.
     """
     if sample_rate != target_sample_rate:
-        waveform = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=target_sample_rate)(waveform)
+        print(f"Warning: Expected sample rate {target_sample_rate}, but got {sample_rate}")
+        # Optionally raise an error if you want strict checking:
+        # raise ValueError(f"Sample rate mismatch: expected {target_sample_rate}, got {sample_rate}")
     return waveform

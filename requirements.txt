@@ -1,10 +1,10 @@
-pydub
 IPython
 ipywidgets
 librosa
 pandas
 phonemizer
 protobuf
+pydub
 numpy
 soundfile
 torch

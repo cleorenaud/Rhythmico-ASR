@@ -1,5 +1,6 @@
 .DS_Store
 wav_files/*
+converted_wav_files/*
 test_wav_files/*
 src/__pycache__/*
 data/*
