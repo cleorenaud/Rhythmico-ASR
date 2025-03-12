@@ -1,31 +1,18 @@
 import os
+import ast
 import pandas as pd
 from phonemizer import phonemize
 
 # Define a function to extract the text, phonemize it, and save to a CSV in the transcriptions folder
-def save_phonetic_transcription_to_csv(data, test_id, folder="transcriptions", file_name="test_phonetic_transcriptions.csv"):
+def save_phonetic_transcription_to_csv(text, folder="transcriptions", file_name="test_phonetic_transcriptions.csv"):
     # Ensure the folder exists, if not, create it
     if not os.path.exists(folder):
         os.makedirs(folder)
     
-    # Step 1: Extract the row with the given test_id
-    row = data[data['id'] == test_id]
-    
-    if row.empty:
-        print(f"No row found for id: {test_id}")
-        return
-    
-    # Step 2: Extract the testParameters text from the row
-    testParameters = row[['testParameters']].values[0][0]  # Extract the text value from the row
-    
-    if not isinstance(testParameters, str):
-        print(f"testParameters is not a string: {testParameters}")
-        return
-    
     # Step 3: Phonemize the testParameters text
     try:
         phonetic_transcription = phonemize(
-            [testParameters],
+            [text],
             language='fr-fr',
             backend='espeak',
             strip=True,
