@@ -1,12 +1,13 @@
+huggingsound==0.1.6
 IPython
 ipywidgets
 librosa
-pandas
+pandas==1.5.3
 phonemizer
 protobuf
 pydub
-numpy
+numpy==1.23.5
 soundfile
-torch
-torchaudio
+torch==1.12.1
+torchaudio==0.12.1
 transformers
