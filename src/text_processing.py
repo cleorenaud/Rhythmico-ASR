@@ -3,8 +3,16 @@ import ast
 import pandas as pd
 from phonemizer import phonemize
 
-# Define a function to extract the text, phonemize it, and save to a CSV in the transcriptions folder
-def save_phonetic_transcription_to_csv(text, folder="transcriptions", file_name="test_phonetic_transcriptions.csv"):
+def save_phonetic_transcription_to_csv(text, test_type, folder="transcriptions", file_name="test_phonetic_transcriptions.csv"):
+    """
+    Function to save the phonetic transcription of a text to a CSV file.
+
+    Args:
+    text (str): The text to phonemize and save.
+    test_type (str): The type of test the text is from.
+    folder (str): The folder where the CSV file will be saved.
+    file_name (str): The name of the CSV file.
+    """
     # Ensure the folder exists, if not, create it
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -24,7 +32,7 @@ def save_phonetic_transcription_to_csv(text, folder="transcriptions", file_name=
     
     # Step 4: Prepare data for CSV
     output_data = {
-        "Test Type": ["readingTestFluencE"],  # Replace with the actual test type if needed
+        "Test Type": [test_type],  # Replace with the actual test type if needed
         "Phonetic Transcription": [phonetic_transcription]
     }
     
