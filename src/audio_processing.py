@@ -82,41 +82,41 @@ def play_m4a(encoded_m4a):
 
     return Audio(audio_np, rate=audio.frame_rate)
 
-def save_as_mp3(encoded_m4a, filename, output_folder="mp3_files"):
-    """Converts and saves M4A audio as MP3 in the specified folder."""
-    
-    os.makedirs(output_folder, exist_ok=True)
-    m4a_buffer = io.BytesIO(encoded_m4a)
-    audio = AudioSegment.from_file(m4a_buffer, format="m4a")
-    mp3_path = os.path.join(output_folder, f"{filename}.mp3")
-    audio.export(mp3_path, format="mp3")
-    return mp3_path
+def save_recordings_as_wav(dataframe, output_dir='converted_wav_files', target_sample_rate=16000, channels=1):
+    """
+    Given a dataframe, save all recordings as .wav files with the correct format (PCM 16-bit, mono, 16kHz).
 
-def save_recordings_as_wav(dataframe, output_dir='wav_files'):
-    """Given a dataframe, save all recordings as .wav files to the specified directory."""
-    
+    Parameters:
+        dataframe (pd.DataFrame): Dataframe containing recordings in 'testResults' column.
+        output_dir (str): Directory where converted .wav files will be saved.
+        target_sample_rate (int): Desired sample rate for output files.
+        channels (int): Number of channels for output files (1 for mono).
+    """
     # Ensure the output directory exists
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    
-    # Iterate through each row in the DataFrame
-    for index, row in dataframe.iterrows():
+    os.makedirs(output_dir, exist_ok=True)
+
+    for _, row in dataframe.iterrows():
         # Extract the recording byte data from the 'testResults' column
         recording = row['testResults'].get('recording', None)
-        
+
         if recording:
             try:
                 # Get the test type, replace spaces with underscores to make filenames safe
                 test_type = str(row.get('testType', 'unknown')).replace(' ', '_')
-                
-                # Construct the filename with id and test type
+
+                # Construct the filename
                 file_name = f"{test_type}_{row['id']}.wav"
                 file_path = os.path.join(output_dir, file_name)
-                
-                # Save the byte data as a .wav file
-                with open(file_path, 'wb') as f:
-                    f.write(recording)
-            
+
+                # Load the recording bytes as an AudioSegment (assuming it's M4A)
+                audio_segment = AudioSegment.from_file(io.BytesIO(recording), format="m4a")
+
+                # Set the sample rate and channels
+                audio_segment = audio_segment.set_frame_rate(target_sample_rate).set_channels(channels).set_sample_width(2)  # 2 bytes = 16 bits
+
+                # Export to WAV with PCM 16-bit encoding
+                audio_segment.export(file_path, format="wav")
+
             except Exception as e:
                 print(f"Error processing recording for ID {row['id']}: {e}")
 
