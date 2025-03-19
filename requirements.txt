@@ -1,6 +1,7 @@
 huggingsound==0.1.6
 IPython
 ipywidgets
+levenshtein
 librosa
 pandas==1.5.3
 phonemizer
