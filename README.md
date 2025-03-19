@@ -9,10 +9,14 @@ The wav files corresponding to each recording can be generated using the `save_r
 ├── data/
 │   └── df_test_cleaned.csv                         # The test data
 │ 
-├── notebooks/                        
-│   ├── readingTestFluencE.ipynb                    # Notebook to process the readingTestFluencE
-│   ├── rythmico.ipynb                              # Notebook for the initial data processing
-│   └── testPhoneme.ipynb                           # Notebook to process the testPhoneme
+├── notebooks/
+│   ├── evaluation                    
+│   │   ├── readingTestFluencE_eval.ipynb           # Notebook to evaluate the readingTestFluencE
+│   │   └── testPhoneme_eval.ipynb                  # Notebook to evaluate the testPhoneme
+│   └── processing 
+│       ├── readingTestFluencE_proc.ipynb           # Notebook to process the readingTestFluencE data
+│       ├── rythmico.ipynb                          # Notebook for the initial data processing
+│       └── testPhoneme_proc.ipynb                  # Notebook to process the testPhoneme data
 │
 ├── src/                         
 │   ├── audio_processing.py                         # Helper functions to process the tests audio recordings  
