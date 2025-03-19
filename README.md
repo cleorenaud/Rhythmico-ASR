@@ -7,29 +7,29 @@ The wav files corresponding to each recording can be generated using the `save_r
 
 ```
 ├── data/
-│   ├── df_test_cleaned.csv                         # The test data
+│   └── df_test_cleaned.csv                         # The test data
 │ 
 ├── notebooks/                        
 │   ├── readingTestFluencE.ipynb                    # Notebook to process the readingTestFluencE
 │   ├── rythmico.ipynb                              # Notebook for the initial data processing
-│   ├── testPhoneme.ipynb                           # Notebook to process the testPhoneme
+│   └── testPhoneme.ipynb                           # Notebook to process the testPhoneme
 │
 ├── src/                         
 │   ├── audio_processing.py                         # Helper functions to process the tests audio recordings  
 │   ├── data_processing.py                          # Helper functions to extract the tests data
 │   ├── text_processing.py                          # Helper functions to save the phonetic transcription of a text to a .csv
-│   ├── ui_tools.py                                 # Helper functions to display audio players
+│   └── ui_tools.py                                 # Helper functions to display audio players
 │
 ├── transcriptions/
 │   ├── readingTestFluencE_children.csv             # The phoneme transcriptions for each children recording for the readingTestFluencE
 │   ├── readingTestFluencE_transcriptions.csv       # The ground truth for the readingTestFluencE
 │   ├── testPhoneme_children.csv                    # The phoneme transcriptions for each children recording for the testPhoneme
 │   ├── testPhoneme_deletion_transcriptions.csv     # The ground truth for the testPhoneme deletion
-│   ├── testPhoneme_fusion_transcriptions.csv       # The ground truth for the testPhoneme fusion
+│   └── testPhoneme_fusion_transcriptions.csv       # The ground truth for the testPhoneme fusion
 │
 ├── wav_files/
 │   ├── readingTestFluencE                          # Folder containing the recordings for the readingTestFluencE
-│   ├── testPhoneme                                 # Folder containing the recordings for the testPhoneme
+│   └── testPhoneme                                 # Folder containing the recordings for the testPhoneme
 │
 ├── .gitignore
 ├── README.md
