@@ -11,23 +11,17 @@ def evaluate_exact_word_match(ground_truth_phonemes: str, child_transcription: s
     gt_words = ground_truth_phonemes.strip().split()
     child_words = child_transcription.strip().split()
 
-    total_words = len(gt_words)
     correct_words = sum(1 for gt, ct in zip(gt_words, child_words) if gt == ct)
-
-    score = correct_words / total_words if total_words > 0 else 0.0
 
     return {
         'method': 'Exact Word Match',
-        'correct': correct_words,
-        'total': total_words,
-        'score': score
+        'score': correct_words
     }
 
 def evaluate_levenshtein_word_match(ground_truth_phonemes: str, child_transcription: str, threshold: float = 0.8):
     gt_words = ground_truth_phonemes.strip().split()
     child_words = child_transcription.strip().split()
 
-    total_words = len(gt_words)
     correct_words = 0
 
     for gt, ct in zip(gt_words, child_words):
@@ -35,27 +29,22 @@ def evaluate_levenshtein_word_match(ground_truth_phonemes: str, child_transcript
         if similarity >= threshold:
             correct_words += 1
 
-    score = correct_words / total_words if total_words > 0 else 0.0
-
     return {
         'method': 'Levenshtein Word Match',
-        'correct': correct_words,
-        'total': total_words,
-        'score': score
+        'score': correct_words
     }
 
 def evaluate_chunked_alignment(ground_truth_phonemes: str, child_transcription: str, threshold: float = 0.8):
     gt_words = ground_truth_phonemes.strip().split()
     child_phonemes = child_transcription.replace(" ", "")
 
-    total_words = len(gt_words)
     correct_words = 0
     child_index = 0
 
     for gt in gt_words:
         gt_len = len(gt)
         if child_index >= len(child_phonemes):
-            break  # Out of data
+            break
 
         candidate = child_phonemes[child_index:child_index + gt_len]
         similarity = levenshtein_similarity(gt, candidate)
@@ -63,22 +52,17 @@ def evaluate_chunked_alignment(ground_truth_phonemes: str, child_transcription: 
         if similarity >= threshold:
             correct_words += 1
 
-        child_index += gt_len  # Move to next chunk
-
-    score = correct_words / total_words if total_words > 0 else 0.0
+        child_index += gt_len
 
     return {
         'method': 'Chunked Alignment',
-        'correct': correct_words,
-        'total': total_words,
-        'score': score
+        'score': correct_words
     }
 
 def evaluate_sliding_window(ground_truth_phonemes: str, child_transcription: str, window_size: int = 5, threshold: float = 0.8):
     gt_words = ground_truth_phonemes.strip().split()
     child_phonemes = child_transcription.replace(" ", "")
 
-    total_words = len(gt_words)
     correct_words = 0
     child_index = 0
 
@@ -86,7 +70,6 @@ def evaluate_sliding_window(ground_truth_phonemes: str, child_transcription: str
         gt_len = len(gt)
         found = False
 
-        # Slide through child's transcription
         while child_index <= len(child_phonemes) - gt_len:
             window = child_phonemes[child_index:child_index + gt_len + window_size]
 
@@ -107,18 +90,14 @@ def evaluate_sliding_window(ground_truth_phonemes: str, child_transcription: str
                 found = True
                 break
             else:
-                child_index += 1  # Move forward by one
+                child_index += 1
 
         if not found:
-            pass  # No match found, move to next gt word
-
-    score = correct_words / total_words if total_words > 0 else 0.0
+            pass
 
     return {
         'method': 'Sliding Window',
-        'correct': correct_words,
-        'total': total_words,
-        'score': score
+        'score': correct_words
     }
 
 def evaluate_global_similarity(ground_truth_phonemes: str, child_transcription: str):
@@ -127,11 +106,11 @@ def evaluate_global_similarity(ground_truth_phonemes: str, child_transcription: 
 
     similarity = levenshtein_similarity(gt_seq, child_seq)
 
+    correct_phonemes = int(similarity * len(gt_seq))
+
     return {
         'method': 'Global Similarity',
-        'correct': int(similarity * len(gt_seq)),
-        'total': len(gt_seq),
-        'score': similarity
+        'score': correct_phonemes
     }
 
 def run_all_evaluations(ground_truth_phonemes: str, child_transcription: str):
