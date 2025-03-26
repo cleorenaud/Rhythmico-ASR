@@ -10,17 +10,24 @@ The wav files corresponding to each recording can be generated using the `save_r
 │   └── df_test_cleaned.csv                         # The test data
 │ 
 ├── notebooks/
-│   ├── evaluation                    
+│   ├── evaluation
+│   │   ├── readingTestFluencE_Azure.ipynb          # Notebook to process the readingTestFluencE using Azure              
 │   │   ├── readingTestFluencE_eval.ipynb           # Notebook to evaluate the readingTestFluencE
 │   │   └── testPhoneme_eval.ipynb                  # Notebook to evaluate the testPhoneme
-│   └── processing 
+│   └── processing
+│       ├── data_proc.ipynb                         # Notebook for the initial data processing
 │       ├── readingTestFluencE_proc.ipynb           # Notebook to process the readingTestFluencE data
-│       ├── rythmico.ipynb                          # Notebook for the initial data processing
 │       └── testPhoneme_proc.ipynb                  # Notebook to process the testPhoneme data
+│
+├── sample_readingTestFluencE/                      # Folder containing the data related to the 9 selected readingTestFluencE
+│   ├── readingTestFluencE_children.csv             # The manual phoneme transcriptions for 9 readingTestFluencE
+│   └── sample_readingTestFluencE_text.csv          # The manual text transcriptions for 9 readingTestFluencE
 │
 ├── src/                         
 │   ├── audio_processing.py                         # Helper functions to process the tests audio recordings  
 │   ├── data_processing.py                          # Helper functions to extract the tests data
+│   ├── readingTestFluencE_evaluation.py            # Custom evaluation functions for the readingTestFluencE
+│   ├── test_evaluation.py                          # Initial evaluation functions for the readingTestFluencE
 │   ├── text_processing.py                          # Helper functions to save the phonetic transcription of a text to a .csv
 │   └── ui_tools.py                                 # Helper functions to display audio players
 │
