@@ -194,7 +194,6 @@ def run_all_evaluations(ground_truth_phonemes: str, child_transcription: str):
         evaluate_levenshtein_word_match,
         evaluate_chunked_alignment,
         evaluate_sliding_window,
-        evaluate_global_similarity
     ]
 
     results = []
@@ -206,4 +205,5 @@ def run_all_evaluations(ground_truth_phonemes: str, child_transcription: str):
         results.append(result)
 
     return results
+
 
