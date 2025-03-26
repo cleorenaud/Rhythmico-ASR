@@ -67,3 +67,31 @@ def eval_1(ground_truth, child_transcription):
                     break  # Move on to the next word in ground truth after finding a match
 
     return found_words, score
+
+def eval_2(ground_truth, child_transcription):
+    gt = ground_truth.strip().split()
+    ct = child_transcription.strip().split()
+    
+    word_states = []  # List to store (word, state) tuples
+    counted_words = set()  # Set to track words already counted as correct
+    score = 0  # Initialize score
+    
+    # Initialize a list to track which words in the child transcription have already been matched
+    ct_matched = [False] * len(ct)
+    
+    # Iterate over words in ground truth in original order
+    for word in gt:
+        found = False
+        for i, ct_word in enumerate(ct):
+            if ct_word == word and not ct_matched[i]:  # Match word if not already matched
+                word_states.append((word, "Correct"))
+                counted_words.add(word)
+                ct_matched[i] = True  # Mark word as matched
+                found = True
+                score += 1  # Increment score for correct match
+                break  # Move to next word in ground truth after finding a match
+        
+        if not found:  # If the word wasn't found, mark as Incorrect
+            word_states.append((word, "Incorrect"))
+    
+    return word_states, score
