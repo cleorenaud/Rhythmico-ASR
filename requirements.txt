@@ -1,3 +1,4 @@
+azure-cognitiveservices-speech
 huggingsound==0.1.6
 IPython
 ipywidgets
@@ -7,6 +8,7 @@ pandas==1.5.3
 phonemizer
 protobuf
 pydub
+python-dotenv
 numpy==1.23.5
 soundfile
 torch==1.12.1

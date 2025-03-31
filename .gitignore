@@ -4,3 +4,5 @@ converted_wav_files/*
 test_wav_files/*
 src/__pycache__/*
 data/*
+.env
+sample_readingTestFluencE/*.wav
