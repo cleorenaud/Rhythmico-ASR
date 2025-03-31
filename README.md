@@ -5,6 +5,8 @@
 As the `df_test_cleaned.csv` file is too big it is not stored on GitHub but it should be added as described in the following structure.
 The wav files corresponding to each recording can be generated using the `save_recordings_as_wav(dataframe)` function in the `src/audio_processing.py` file.
 
+To run the `notebooks/evaluation/readingTestFluencE_Azure.ipynb`, one should define `AZURE_SPEECH_KEY` and `AZURE_REGION` in a .env file
+
 ```
 ├── data/
 │   └── df_test_cleaned.csv                         # The test data
