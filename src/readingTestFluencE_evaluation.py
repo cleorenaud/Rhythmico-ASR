@@ -1,4 +1,5 @@
 import csv
+import ast
 
 def eval_0(ground_truth, child_transcription):
     gt = ground_truth.strip().split()
@@ -178,25 +179,30 @@ def evaluate_sentence(phoneme_options, target_sentence, buffer_size):
 
     return results
 
-def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, ground_truth, buffer_size=15, detailed=False):
+def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, expected_phonemes, buffer_size=15, detailed=False):
     """"
     Evaluates the phoneme predictions against the ground truth using a buffer
 
     Args:
     - readingTestFluencE_df: DataFrame containing the test data.
     - test_id: The ID of the test to evaluate.
-    - ground_truth: The ground truth sentence to compare against.
+    - expected_phonemes: The ground truth sentence to compare against.
     - buffer_size: The size of the rolling buffer for phoneme predictions.
     - detailed: If True, prints detailed evaluation results.
     """
     test_row = readingTestFluencE_df[readingTestFluencE_df['id'] == test_id]
+    test_dict = ast.literal_eval(test_row['testParameters'].values[0])
+    
+    selected_text = test_dict['textSelected']['text']
+    selected_words = selected_text.split()
+    
     evaluation_result = test_row['evaluationResults'].apply(
         lambda x: x['wordsState'] if 'wordsState' in x else None).dropna().tolist()
-
+    
     # We extract the ground truth for each test
     read_words = [[d for d in row if list(d.values())[0] != "NonRead"] for row in evaluation_result]
     reference_text = ' '.join([list(d.keys())[0] for row in read_words for d in row])
-    target_sentence = " ".join(ground_truth[:len(reference_text.split())]) 
+    target_sentence = " ".join(expected_phonemes[:len(reference_text.split())]) 
 
     csv_filename = f"sample_readingTestFluencE/readingTestFluencE_{test_id}_phonemes.csv"
 
@@ -211,9 +217,9 @@ def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, ground_truth, buffe
     if detailed:
         # Print detailed evaluation
         print("Detailed Evaluation:")
-        for word, status in word_results:
+        for (phoneme_word, status), grapheme_word in zip(word_results, selected_words):
             status_symbol = "✅" if status == "correct" else "❌"
-            print(f"{status_symbol} {word} → {status}")
+            print(f"{status_symbol} {grapheme_word} → {status}")
 
     # Summary of correctness
     correct_words = sum(1 for _, status in word_results if status == "correct")
