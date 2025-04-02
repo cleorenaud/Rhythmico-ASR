@@ -47,3 +47,17 @@ def convert_str_to_dct_eval(string):
         return data_dict
     except (ValueError, SyntaxError) as e:
         print(f"Error parsing string: {e}")
+
+def prepare_readingTestFluencE_data():
+    # Load the cleaned data
+    data_path = 'data/df_test_cleaned.csv'
+    tests_df = pd.read_csv(data_path)
+
+    # We only keep the rows where the testType is readingTestFluencE
+    readingTestFluencE_df = tests_df[tests_df['testType'] == 'readingTestFluencE']
+
+    # Apply conversion functions to testResults and evaluationResults columns
+    readingTestFluencE_df['testResults'] = readingTestFluencE_df['testResults'].apply(lambda x: convert_str_to_dct_eval(x))
+    readingTestFluencE_df['evaluationResults'] = readingTestFluencE_df['evaluationResults'].apply(lambda x: convert_str_to_dct_eval(x))
+
+    return readingTestFluencE_df
