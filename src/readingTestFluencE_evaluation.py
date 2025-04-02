@@ -121,7 +121,7 @@ def load_predictions(csv_filename):
     return phoneme_options
 
 
-def evaluate_sentence(phoneme_options, target_sentence, buffer_size=15):
+def evaluate_sentence(phoneme_options, target_sentence, buffer_size):
     """
     Evaluates whether each word in the target sentence was correctly pronounced using a rolling buffer.
     - Adds phoneme options to a buffer one at a time.
@@ -178,9 +178,16 @@ def evaluate_sentence(phoneme_options, target_sentence, buffer_size=15):
 
     return results
 
-def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, ground_truth):
+def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, ground_truth, buffer_size=15, detailed=False):
     """"
     Evaluates the phoneme predictions against the ground truth using a buffer
+
+    Args:
+    - readingTestFluencE_df: DataFrame containing the test data.
+    - test_id: The ID of the test to evaluate.
+    - ground_truth: The ground truth sentence to compare against.
+    - buffer_size: The size of the rolling buffer for phoneme predictions.
+    - detailed: If True, prints detailed evaluation results.
     """
     test_row = readingTestFluencE_df[readingTestFluencE_df['id'] == test_id]
     evaluation_result = test_row['evaluationResults'].apply(
@@ -197,13 +204,16 @@ def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, ground_truth):
     phoneme_options = load_predictions(csv_filename)
 
     # Evaluate each word
-    word_results = evaluate_sentence(phoneme_options, target_sentence, buffer_size=25)
+    word_results = evaluate_sentence(phoneme_options, target_sentence, buffer_size=buffer_size)
 
-    # Print results
-    print("Word-by-word evaluation:")
-    for word, status in word_results:
-        status_symbol = "✅" if status == "correct" else "❌"
-        print(f"{status_symbol} {word} → {status}")
+    print(f"Buffer size: {buffer_size}")
+
+    if detailed:
+        # Print detailed evaluation
+        print("Detailed Evaluation:")
+        for word, status in word_results:
+            status_symbol = "✅" if status == "correct" else "❌"
+            print(f"{status_symbol} {word} → {status}")
 
     # Summary of correctness
     correct_words = sum(1 for _, status in word_results if status == "correct")
