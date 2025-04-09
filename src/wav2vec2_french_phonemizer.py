@@ -11,6 +11,16 @@ MODEL_ID = "Cnam-LMSSC/wav2vec2-french-phonemizer"
 model = AutoModelForCTC.from_pretrained(MODEL_ID)
 processor = Wav2Vec2Processor.from_pretrained(MODEL_ID)
 
+
+def sanitize_row(row):
+    """
+    Replaces malformed standalone tilde characters in a CSV row.
+    Specifically, replaces the combining tilde character (U+0303) with a standalone tilde (U+02DC)
+    when it appears isolated.
+    """
+    return [col.replace("̃", "˜") if col == "̃" else col for col in row]
+
+
 def top_3_phoneme_transcriptions(tests_id):
     # We iterate over the tests_id and we create the top-3 phoneme transcriptions
     for test_id in tests_id:
@@ -44,7 +54,9 @@ def top_3_phoneme_transcriptions(tests_id):
 
             # Avoid adding consecutive duplicate phoneme sets
             if phoneme_tuple != last_phoneme_set:
-                filtered_transcriptions.append([i] + list(phoneme_tuple))
+                row = [i] + list(phoneme_tuple)
+                sanitized_row = sanitize_row(row)
+                filtered_transcriptions.append(sanitized_row)
                 last_phoneme_set = phoneme_tuple  # Update last seen set
 
         # Define output CSV file name

@@ -36,7 +36,7 @@ Timestep,Top_1,Top_2,Top_3
 471,i,e,[PAD]
 481,f,z,s
 486,ɔ,ɑ,ɛ
-489,̃,[PAD],n
+489,˜,[PAD],n
 521,t,k,ʒ
 529,y,i,e
 603,o,u,ɔ
@@ -45,7 +45,7 @@ Timestep,Top_1,Top_2,Top_3
 640,ʁ,[PAD],ɾ
 704,d,l,[PAD]
 708,ɑ,ɔ,œ
-712,̃,[PAD],ʁ
+712,˜,[PAD],ʁ
 730,l,[PAD],j
 735,ø,y,[PAD]
 773,i,e,[PAD]
@@ -59,12 +59,12 @@ Timestep,Top_1,Top_2,Top_3
 855,ɛ,u,i
 863,z,s,[PAD]
 868,ɔ,ə,ɑ
-872,̃,[PAD],n
+872,˜,[PAD],n
 886,ɛ,e,i
 893,t,[PAD],|
 894,t,|,[PAD]
 898,ɑ,œ,ɔ
-901,̃,[PAD],ʁ
+901,˜,[PAD],ʁ
 908,t,d,k
 913,u,o,y
 918,ʁ,[PAD],ɾ
@@ -80,7 +80,7 @@ Timestep,Top_1,Top_2,Top_3
 1004,v,ʁ,l
 1008,ɛ,e,[PAD]
 1015,k,t,d
-1021,n,[PAD],̃
+1021,n,[PAD],˜
 1028,p,b,v
 1030,a,ɛ,e
 1036,ʁ,[PAD],ɾ
@@ -93,7 +93,7 @@ Timestep,Top_1,Top_2,Top_3
 1204,k,p,t
 1210,ɔ,ɑ,u
 1244,ɔ,ɑ,œ
-1249,̃,[PAD],m
+1249,˜,[PAD],m
 1257,b,[PAD],p
 1259,ʁ,[PAD],a
 1326,i,e,[PAD]
@@ -126,7 +126,7 @@ Timestep,Top_1,Top_2,Top_3
 1669,u,o,ɔ
 1685,f,v,[PAD]
 1689,ɔ,ɑ,ə
-1693,̃,[PAD],ʁ
+1693,˜,[PAD],ʁ
 1702,d,t,[PAD]
 1705,y,ə,e
 1712,ʒ,ʃ,[PAD]
@@ -134,7 +134,7 @@ Timestep,Top_1,Top_2,Top_3
 1720,ʁ,[PAD],ː
 1728,d,b,p
 1733,ɛ,ɑ,œ
-1737,̃,n,[PAD]
+1737,˜,n,[PAD]
 1781,l,[PAD],j
 1784,ə,[PAD],e
 1832,p,b,k
@@ -143,7 +143,7 @@ Timestep,Top_1,Top_2,Top_3
 1853,t,k,d
 1859,i,e,[PAD]
 1869,l,[PAD],j
-1880,̃,[PAD],n
+1880,˜,[PAD],n
 1919,ɛ,a,e
 1932,t,[PAD],k
 1944,t,d,[PAD]
@@ -164,7 +164,7 @@ Timestep,Top_1,Top_2,Top_3
 2069,ʃ,s,ʒ
 2073,j,[PAD],i
 2076,ɛ,a,ɑ
-2080,̃,[PAD],ʁ
+2080,˜,[PAD],ʁ
 2115,a,[PAD],ɑ
 2164,i,e,[PAD]
 2193,s,z,t
@@ -206,4 +206,4 @@ Timestep,Top_1,Top_2,Top_3
 2989,a,ɑ,œ
 3000,l,n,j
 3003,ɔ,o,ɑ
-3006,̃,[PAD],n
+3006,˜,[PAD],n
