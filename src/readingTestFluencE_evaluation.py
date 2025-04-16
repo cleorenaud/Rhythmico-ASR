@@ -156,8 +156,8 @@ def evaluate_sentence(phoneme_options, target_sentence, buffer_size):
     results = []
 
     for word in words:
-        # print("==" * 20)
-        # print(f"Target word: {word}")
+        print("==" * 20)
+        print(f"Target word: {word}")
 
         for _ in range(buffer_size):  # Ensure we don't go beyond buffer size
             found, used_indices = can_reconstruct_word(buffer, word)
@@ -171,6 +171,8 @@ def evaluate_sentence(phoneme_options, target_sentence, buffer_size):
             else:
                 if phoneme_options:
                     buffer.append(phoneme_options.pop(0))
+
+                    print(f"Buffer: {buffer}")
                    
         else:  # If no match is found after buffer fills up, move on
             results.append((word, "missed"))
@@ -225,10 +227,10 @@ def top_3_phoneme_evaluation(readingTestFluencE_df, test_id, expected_phonemes, 
     print(f"\nFinal Score: {correct_words}/{total_words} words read correctly.")
 
 
-def top_3_phoneme_evaluation_reverse(readingTestFluencE_df, test_id, expected_phonemes, buffer_size=15, detailed=False):
-    """
-    Evaluates the phoneme predictions against the ground truth using a buffer, from RIGHT to LEFT.
-    
+def top_3_phoneme_evaluation_with_proba(readingTestFluencE_df, test_id, expected_phonemes, buffer_size=15, detailed=False):
+    """"
+    Evaluates the phoneme predictions against the ground truth using a buffer
+
     Args:
     - readingTestFluencE_df: DataFrame containing the test data.
     - test_id: The ID of the test to evaluate.
@@ -245,33 +247,29 @@ def top_3_phoneme_evaluation_reverse(readingTestFluencE_df, test_id, expected_ph
     evaluation_result = test_row['evaluationResults'].apply(
         lambda x: x['wordsState'] if 'wordsState' in x else None).dropna().tolist()
     
-    # Extract read words from evaluation
+    # We extract the ground truth for each test
     read_words = [[d for d in row if list(d.values())[0] != "NonRead"] for row in evaluation_result]
     reference_text = ' '.join([list(d.keys())[0] for row in read_words for d in row])
-    ref_word_count = len(reference_text.split())
-    
-    # Build reversed target sentence
-    target_sentence_words = expected_phonemes[:ref_word_count][::-1]
-    target_sentence = " ".join(target_sentence_words)
+    target_sentence = " ".join(expected_phonemes[:len(reference_text.split())]) 
 
-    # Match reversed alphabetical words
-    selected_words_reversed = selected_words[:ref_word_count][::-1]
+    csv_filename = f"sample_readingTestFluencE/readingTestFluencE_{test_id}_phonemes.csv"
 
     # Load the phoneme predictions
-    csv_filename = f"sample_readingTestFluencE/readingTestFluencE_{test_id}_phonemes.csv"
     phoneme_options = load_predictions(csv_filename)
 
-    # Evaluate each word (in reversed order)
+    # Evaluate each word
     word_results = evaluate_sentence(phoneme_options, target_sentence, buffer_size=buffer_size)
 
-    print(f"Buffer size: {buffer_size} (right-to-left evaluation)")
+    print(f"Buffer size: {buffer_size}")
 
     if detailed:
-        print("Detailed Evaluation (Right to Left):")
-        for (phoneme_word, status), grapheme_word in zip(word_results, selected_words_reversed):
+        # Print detailed evaluation
+        print("Detailed Evaluation:")
+        for (phoneme_word, status), grapheme_word in zip(word_results, selected_words):
             status_symbol = "✅" if status == "correct" else "❌"
             print(f"{status_symbol} {grapheme_word} → {status}")
 
+    # Summary of correctness
     correct_words = sum(1 for _, status in word_results if status == "correct")
     total_words = len(word_results)
     print(f"\nFinal Score: {correct_words}/{total_words} words read correctly.")
