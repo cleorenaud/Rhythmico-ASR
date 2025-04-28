@@ -68,11 +68,11 @@ def top_3_phoneme_transcriptions(tests_id):
 
         print(f"Filtered top-3 phoneme transcriptions saved to {csv_filename}")
 
-def top_3_phoneme_transcriptions_with_proba(tests_id):
+def top_3_phoneme_transcriptions_with_proba(tests_id, folder_path):
     # We iterate over the tests_id and we create the top-3 phoneme transcriptions
     for test_id in tests_id:
         # We extract the audio file
-        audio_file = f"sample_readingTestFluencE/readingTestFluencE_{test_id}.wav"
+        audio_file = f"{folder_path}_{test_id}.wav"
         audio, _ = sf.read(audio_file)
 
         # Preprocess the audio and prepare the inputs for the model
