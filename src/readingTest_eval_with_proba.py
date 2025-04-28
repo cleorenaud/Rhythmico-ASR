@@ -1,7 +1,5 @@
 import csv
 import ast
-import unicodedata
-
 
 def load_predictions_with_proba(csv_filename, proba_threshold=0.1):
     """
@@ -125,6 +123,11 @@ def evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence, pr
     Evaluates each word in the target_sentence using a rolling buffer of phoneme predictions 
     (with probabilities) and dynamic buffer sizes. Instead of adding phonemes one by one, 
     it adds a chunk of phonemes corresponding to word length + extra.
+
+    Args:
+        phoneme_options_with_proba: List of tuples (timestamp, predictions) where predictions is a list of (phoneme, probability).
+        target_sentence: The sentence to evaluate.
+        proba_threshold: Probability threshold for phoneme inclusion.
     """
     words = target_sentence.split()
     buffer = []
