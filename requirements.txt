@@ -4,6 +4,7 @@ IPython
 ipywidgets
 levenshtein
 librosa
+matplotlib
 pandas==1.5.3
 phonemizer
 protobuf
