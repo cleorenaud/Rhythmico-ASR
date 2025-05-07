@@ -18,6 +18,7 @@ def extract_dct(dct):
 
     return extracted
 
+
 def convert_str_to_dct_paramExp(string):
     """Converts a string representation of a dictionary using parameter expansion."""
 
@@ -26,6 +27,7 @@ def convert_str_to_dct_paramExp(string):
         return None
     
     return ast.literal_eval(string)
+
 
 def convert_str_to_dct_eval(string):
     """Converts a string representation of a dictionary using eval (use with caution)."""
@@ -48,16 +50,27 @@ def convert_str_to_dct_eval(string):
     except (ValueError, SyntaxError) as e:
         print(f"Error parsing string: {e}")
 
-def prepare_readingTest_data(test_type):
+
+def prepare_readingTest_data(test_type=''):
+    """
+    Prepares the reading test data for analysis.
+
+    Args:
+        test_type (str): The type of reading test to filter by. By default, all test types are included
+    Returns:
+        pd.DataFrame: A DataFrame containing the prepared reading test data.
+    """
+
     # Load the cleaned data
     data_path = 'data/df_test_cleaned.csv'
     tests_df = pd.read_csv(data_path)
 
-    # We only keep the rows where the testType is readingTestFluencE
-    readingTest_df = tests_df[tests_df['testType'] == f'readingTest{test_type}']
+    # If a test type was specified we filter the data frame to only include that test type
+    if test_type != '':
+        tests_df = tests_df[tests_df['testType'] == f'readingTest{test_type}']
 
     # Apply conversion functions to testResults and evaluationResults columns
-    readingTest_df['testResults'] = readingTest_df['testResults'].apply(lambda x: convert_str_to_dct_eval(x))
-    readingTest_df['evaluationResults'] = readingTest_df['evaluationResults'].apply(lambda x: convert_str_to_dct_eval(x))
+    tests_df['testResults'] = tests_df['testResults'].apply(lambda x: convert_str_to_dct_eval(x))
+    tests_df['evaluationResults'] = tests_df['evaluationResults'].apply(lambda x: convert_str_to_dct_eval(x))
 
-    return readingTest_df
+    return tests_df
