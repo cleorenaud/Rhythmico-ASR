@@ -7,3 +7,4 @@ data/*
 .env
 sample_readingTestFluencE/*.wav
 sample_readingTestNonWords/*.wav
+transcriptions/*
