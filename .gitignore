@@ -5,6 +5,6 @@ test_wav_files/*
 src/__pycache__/*
 data/*
 .env
-sample_readingTestFluencE/*.wav
-sample_readingTestNonWords/*.wav
+sample_readingTestFluencE/*
+sample_readingTestNonWords/*
 transcriptions/*
