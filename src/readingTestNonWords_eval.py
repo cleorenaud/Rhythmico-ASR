@@ -1,5 +1,6 @@
 import csv
-import ast
+from phonemizer import phonemize
+import unicodedata
 
 def load_predictions_with_proba(csv_filename, proba_threshold=0.1):
     """
@@ -134,9 +135,6 @@ def evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence, pr
     results = []
     
     for word in words:
-        # TODO: remove
-        # print("==" * 20)
-        # print(f"Evaluating word: {word}")
 
         matched = False
 
@@ -155,9 +153,6 @@ def evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence, pr
         # Try matching the word
         found, used_indices, used_probs = can_reconstruct_word(buffer, word)
 
-        # TODO: remove
-        # print(f"Buffer: {buffer}")
-
         if found:
             if any(prob < proba_threshold for prob in used_probs):
                 state = "uncertain_correct"
@@ -173,7 +168,7 @@ def evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence, pr
         else:
             # Try partial match
             percentage, used_indices, used_probs = partial_match_percentage(buffer, word)
-            if percentage >= 0.4:
+            if percentage >= 0.8:
                 state = "uncertain_incorrect"
 
                 timestamp = buffer[used_indices[0]][0] if used_indices else None
@@ -226,47 +221,48 @@ def compare_evaluations(word_results, evaluation_result):
     return false_positives, false_negatives
 
 
-def top_3_phoneme_evaluation_with_proba(readingTest_df, test_type, test_id, expected_phonemes, detailed=False):
+def evaluate_readingTestNonWords(readingTest_df, test_id, target_sentence, detailed=False):
     """
     Evaluates the phoneme predictions against the ground truth using a rolling buffer that takes into account probabilities.
     
-    For each word, returns a tuple (word, state, timestamp), where:
-      - state is 'correct', 'incorrect', or 'uncertain'
-      - timestamp (if provided) is the timestamp at which the word began (only returned if the word is uncertain)
-    
     Args:
-      readingTestFluencE_df: DataFrame containing the test data.
-      test_id: The test ID.
-      expected_phonemes: The ground truth sentence in phoneme representation.
-      detailed: If True, prints detailed evaluation.
+    - readingTest_df: DataFrame containing the test data.
+    - test_id: The ID of the test to evaluate.
+    - detailed: If True, prints detailed evaluation results. Default is False.
+
+    Returns:
+    - word_results: List of tuples (word, state, timestamp) from computed phoneme evaluation.
     """
+    # We extract the data corresponding to the test_id
     test_row = readingTest_df[readingTest_df['id'] == test_id]
-    test_dict = ast.literal_eval(test_row['testParameters'].values[0])
+    test_dict = test_row['evaluationResults'].values[0]
+
+    expected_words = [list(word_dict.keys())[0] for word_dict in test_dict['wordsState']]
+    # expected_phonemes = phonemize(
+    #             expected_words,
+    #             language='fr-fr',
+    #             backend='espeak',
+    #             strip=True,
+    #             njobs=1
+    #         )
+
+    # # The expected sentence written in phonetic notation
+    # target_sentence = unicodedata.normalize("NFD", " ".join(expected_phonemes))
+    # print(f"Target Sentence: {target_sentence}")
     
-    selected_text = test_dict['textSelected']['text']  # Grapheme (alphabetical) ground truth
-    selected_words = selected_text.split()
-    
-    evaluation_result = test_row['evaluationResults'].apply(
-        lambda x: x['wordsState'] if 'wordsState' in x else None).dropna().tolist()
-        
-    # Extract ground truth (phoneme representation) from evaluation results.
-    read_words = [[d for d in row if list(d.values())[0] != "NonRead"] for row in evaluation_result]
-    reference_text = ' '.join([list(d.keys())[0] for row in read_words for d in row])
-    # Ensure we have as many expected_phoneme words as there are in the reference text.
-    target_sentence = " ".join(expected_phonemes[:len(reference_text.split())])
-    
-    csv_filename = f"sample_{test_type}/{test_type}_{test_id}_phonemes.csv"
     # Load phoneme predictions with probability data
+    csv_filename = f"sample_readingTestNonWords/readingTestNonWords_{test_id}_phonemes.csv"
     phoneme_options_with_proba = load_predictions_with_proba(csv_filename)
     
     # Evaluate the sentence using the updated function.
     word_results = evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence)
 
-    compare_evaluations(word_results, evaluation_result) 
+    # TODO: remove or modify
+    # compare_evaluations(word_results, evaluation_result) 
     
     if detailed:
         print("Detailed Evaluation:")
-        for (word, state, ts), grapheme_word in zip(word_results, selected_words):
+        for (word, state, ts), grapheme_word in zip(word_results, expected_words):
             if state == "correct":
                 symbol = "✅"
             elif state == "incorrect":
