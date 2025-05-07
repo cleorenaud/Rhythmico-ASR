@@ -17,13 +17,13 @@ The three following models are used and compared in this project:
 │   └── df_test_cleaned.csv                         # The test data
 │ 
 ├── notebooks/
-│   ├── evaluation
+│   ├── evaluation/
 │   │   ├── readingTestFluencE_Azure.ipynb          # Notebook to process the readingTestFluencE using Azure              
 │   │   ├── readingTestFluencE_eval.ipynb           # Notebook to evaluate the readingTestFluencE
 │   │   ├── readingTestFluencE_top3_eval.ipynb      # Notebook to evaluate the readingTestFluencE using the top 3 phoneme predictions
 │   │   ├── readingTestNonWords_top3_eval.ipynb     # Notebook to evaluate the readingTestNonWords using the top 3 phoneme predictions
 │   │   └── testPhoneme_eval.ipynb                  # Notebook to evaluate the testPhoneme
-│   ├── processing
+│   ├── processing/
 │   │   ├── data_proc.ipynb                         # Notebook for the initial data processing
 │   │   ├── readingTestFluencE_proc.ipynb           # Notebook to process the readingTestFluencE data
 │   │   ├── readingTestNonWords_proc.ipynb          # Notebook to process the readingTestNonWords data
