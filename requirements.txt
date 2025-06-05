@@ -11,6 +11,7 @@ protobuf
 pydub
 python-dotenv
 numpy==1.23.5
+seaborn
 soundfile
 torch==1.12.1
 torchaudio==0.12.1
