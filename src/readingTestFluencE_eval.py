@@ -1,5 +1,7 @@
 import csv
 import ast
+from collections import deque
+
 
 def eval_0(ground_truth, child_transcription):
     gt = ground_truth.strip().split()
@@ -35,41 +37,47 @@ def eval_1(ground_truth, child_transcription):
     gt = ground_truth.strip().split()
     ct = child_transcription.strip().split()
 
-    found_words = []  # List to store found words
-    score = 0  # Initialize score
-    counted_words = set()  # Set to track words already counted as correct
+    word_states = []                      # To store (word, "Correct"/"Incorrect") for each ground truth word
+    score = 0                             # Count of correct matches
+    ct_matched = [False] * len(ct)        # Track matched child words
 
     # Group ground truth words by their length
-    length_groups = {i: [] for i in range(1, 7)}  # Group words by length (1 to 6 characters)
+    length_groups = {i: [] for i in range(1, 7)}  # 1 to 6 (6 = 6 or more)
 
     for word in gt:
-        if len(word) >= 6:  # First, group words of length 6 or more
-            length_groups[6].append(word)
-        elif len(word) == 5:
-            length_groups[5].append(word)
-        elif len(word) == 4:
-            length_groups[4].append(word)
-        elif len(word) == 3:
-            length_groups[3].append(word)
-        elif len(word) == 2:
-            length_groups[2].append(word)
-        else:
-            length_groups[1].append(word)
+        length = min(len(word), 6)  # Group length >= 6 into key 6
+        length_groups[length].append(word)
 
-    # Initialize a list to track which words in the child transcription have already been matched
-    ct_matched = [False] * len(ct)
-
-    # First pass: Check words of length 6 and more
+    # Create a copy of gt sorted by length priority for matching
+    # But keep track of original gt order for final word_states
+    sorted_gt = []
     for length in range(6, 0, -1):
-        for word in length_groups[length]:
-            for i, ct_word in enumerate(ct):
-                if ct_word == word and not ct_matched[i]:  # Match word if not already matched
-                    found_words.append(word)
-                    score += 1
-                    ct_matched[i] = True  # Mark word as matched
-                    break  # Move on to the next word in ground truth after finding a match
+        sorted_gt.extend(length_groups[length])
 
-    return found_words, score
+    # Match in length-priority order and mark matched words
+    matched_words = {}  # Map from matched word to list of matched positions in ct
+    for word in sorted_gt:
+        for i, ct_word in enumerate(ct):
+            if ct_word == word and not ct_matched[i]:
+                ct_matched[i] = True
+                matched_words.setdefault(word, []).append(i)
+                break
+
+    # Now reconstruct word_states in the **original gt order**
+    ct_used_positions = set()
+    for word in gt:
+        # Check if there's a remaining unmatched ct position for this word
+        matched_pos_list = matched_words.get(word, [])
+        if matched_pos_list:
+            # Mark one matched position as used
+            used_pos = matched_pos_list.pop(0)
+            ct_used_positions.add(used_pos)
+            word_states.append((word, "Correct"))
+            score += 1
+        else:
+            word_states.append((word, "Incorrect"))
+
+    return word_states, score
 
 def eval_2(ground_truth, child_transcription):
     gt = ground_truth.strip().split()
@@ -98,6 +106,96 @@ def eval_2(ground_truth, child_transcription):
             word_states.append((word, "Incorrect"))
     
     return word_states, score
+
+
+def eval_3(ground_truth, child_transcription):
+    """
+    Evaluates phonetic transcription by attempting to reconstruct expected words
+    using a sliding buffer of up to 15 phonemes from the child transcription.
+    Processes phonemes one by one from the child transcription, similar to evaluate_sentence.
+    
+    Args:
+        ground_truth: String of expected phonemes (space-separated words)
+        child_transcription: String of pronounced phonemes (space-separated single phonemes)
+    
+    Returns:
+        tuple: (word_states, score) where word_states is list of (word, state) tuples
+    """
+    
+    def can_reconstruct_word(buffer, target_word):
+        """
+        Checks if the target_word can be formed using phonemes from the buffer while maintaining order.
+        Returns True and a list of indices used if the word is reconstructed.
+        Otherwise, returns False and an empty list.
+        """
+        target_phonemes = list(target_word)  # Convert word to phoneme list (each char is a phoneme)
+        target_index = 0  # Tracks position in target word
+        used_indices = []  # Stores the buffer indices used to match the word
+
+        for i, phoneme in enumerate(buffer):
+            if target_index < len(target_phonemes) and target_phonemes[target_index] == phoneme:
+                used_indices.append(i)
+                target_index += 1  # Move to next phoneme
+
+            if target_index == len(target_phonemes):  # If all phonemes were found in order
+                return True, used_indices  # Return True and the indices used
+
+        return False, []  # Could not reconstruct the word
+    
+    # Parse input - create a list that we'll consume one by one
+    gt_words = ground_truth.strip().split()  # Split into words
+    ct_string = child_transcription.replace(' ', '')  # Remove spaces to get continuous string
+    phoneme_queue = list(ct_string)  # Convert to list of individual characters (phonemes)
+    
+    word_states = []  # List to store (word, state) tuples
+    score = 0  # Initialize score
+    buffer = []  # Rolling buffer for phoneme predictions
+    
+    # Process each word in ground truth
+    for word in gt_words:   
+        word_found = False
+        phonemes_tried = 0
+        
+        # First, check if word can be reconstructed with current buffer contents
+        found, used_indices = can_reconstruct_word(buffer, word)
+        if found:
+            word_states.append((word, "Correct"))
+            score += 1
+            word_found = True
+            # Remove only the phonemes that were used (up to and including the last used index)
+            last_used_index = max(used_indices) if used_indices else -1
+            buffer = buffer[last_used_index + 1:]
+        else:
+            # If buffer is already full (15 phonemes) and word not found, skip to next word
+            if len(buffer) >= 15:
+                word_states.append((word, "Incorrect"))
+                continue
+            
+            # If not found with current buffer, add phonemes one by one up to limit of 15 attempts
+            while phonemes_tried < 15 and phoneme_queue and not word_found:
+                # Add one phoneme at a time
+                if len(buffer) >= 15:
+                    buffer.pop(0)  # Remove oldest phoneme to maintain buffer size limit
+                
+                buffer.append(phoneme_queue.pop(0))  # Take next phoneme from queue
+                phonemes_tried += 1
+                
+                # Try to reconstruct the word again
+                found, used_indices = can_reconstruct_word(buffer, word)
+                if found:
+                    word_states.append((word, "Correct"))
+                    score += 1
+                    word_found = True
+                    # Remove only the phonemes that were used (up to and including the last used index)
+                    last_used_index = max(used_indices) if used_indices else -1
+                    buffer = buffer[last_used_index + 1:]
+        
+        # If word not found after trying up to 15 phonemes
+        if not word_found:
+            word_states.append((word, "Incorrect"))
+    
+    return word_states, score
+
 
 def load_predictions(csv_filename):
     """
