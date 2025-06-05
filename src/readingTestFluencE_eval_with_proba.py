@@ -262,7 +262,7 @@ def top_3_phoneme_evaluation_with_proba(readingTest_df, test_type, test_id, expe
     # Evaluate the sentence using the updated function.
     word_results = evaluate_sentence_with_proba(phoneme_options_with_proba, target_sentence)
 
-    compare_evaluations(word_results, evaluation_result) 
+    false_pos, false_neg = compare_evaluations(word_results, evaluation_result) 
     
     if detailed:
         print("Detailed Evaluation:")
@@ -297,4 +297,4 @@ def top_3_phoneme_evaluation_with_proba(readingTest_df, test_type, test_id, expe
     for state, count in state_counts.items():
         print(f"{state}: {count}")
 
-    return word_results
+    return word_results, false_pos, false_neg
